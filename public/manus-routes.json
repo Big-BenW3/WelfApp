@@ -1,0 +1,12 @@
+{
+  "routes": [
+    { "path": "/", "title": "Wella — Raise what needs fixing" },
+    { "path": "/login", "title": "Log in — Wella" },
+    { "path": "/register", "title": "Create an account — Wella" },
+    { "path": "/app", "title": "Wella feed" },
+    { "path": "/app/search", "title": "Search issues — Wella" },
+    { "path": "/app/profile", "title": "Your profile — Wella" },
+    { "path": "/issues/:id", "title": "Issue detail — Wella" },
+    { "path": "/admin", "title": "Admin dashboard — Wella" }
+  ]
+}
