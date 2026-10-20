@@ -1,3 +1,11 @@
+// ─── Wella data-access layer ────────────────────────────────────────────────
+// Route map for new developers:
+//   lib/db/schema.ts      → Drizzle table definitions (source of truth for columns)
+//   lib/db/client.ts      → lazy `postgres` client from DATABASE_URL
+//   lib/db/repository.ts  → (this file) all SQL; public projections strip identity
+//   lib/store.ts          → thin guards + fallbacks used by API routes / pages
+// Privacy rule: anonymous rows keep author_id internally for moderation,
+// but every public projection below returns author = null unless includePrivate.
 import { getDatabase } from "./client";
 import {
   initialsFor,
@@ -31,7 +39,10 @@ function toComment(
   row: Record<string, unknown>,
   includePrivate: boolean,
 ): Comment {
-  const isAnonymous = Boolean(row.is_anonymous);
+  // NOTE: older databases may not have comments.is_anonymous yet (see
+  // db/migrations/0001_comment_anonymity.sql). Treat a missing column as
+  // "not anonymous" so reads keep working until the migration is applied.
+  const isAnonymous = Boolean(row.is_anonymous ?? false);
   const author =
     isAnonymous && !includePrivate
       ? null
@@ -83,12 +94,24 @@ export async function createUser(email: string, passwordHash: string, displayNam
   return rows[0] ?? null;
 }
 
-export async function listIssuesFromDb(options: { query?: string; category?: Category; sort?: SortMode }) {
+export async function listIssuesFromDb(options: {
+  query?: string;
+  category?: Category;
+  sort?: SortMode;
+}) {
   const sql = getDatabase();
   if (!sql) return null;
+  // FEED QUERY — powers /, /app, /app/search, and the admin summary.
+  // Aggregates votes + visible comments per issue in one round trip.
+  // Columns referenced here must exist in BOTH migrations:
+  //   0000 → comments.is_hidden · 0001 → comments.is_anonymous
+  // If your DB predates 0001, run `pnpm db:migrate` (or apply the SQL
+  // manually) instead of editing this query.
   const query = options.query?.trim() || "";
   const category = options.category;
   const sort = options.sort === "newest" ? sql`i.created_at desc` : options.sort === "commented" ? sql`comment_count desc, i.created_at desc` : sql`(upvotes - downvotes) desc, i.created_at desc`;
+  // NOTE: c.is_hidden / c.is_anonymous may be absent on DBs created before
+  // migrations 0000/0001 fully ran. COALESCE keeps the join valid there.
   const rows = await sql<Record<string, unknown>[]>`
     select i.id, i.title, i.description, i.category, i.status, i.is_anonymous, i.author_id, i.author_name_snapshot, i.image_url, i.official_reply, i.official_reply_at, i.created_at, i.updated_at,
       coalesce(sum(case when v.direction = 'up' then 1 else 0 end), 0)::int as upvotes,
@@ -96,7 +119,7 @@ export async function listIssuesFromDb(options: { query?: string; category?: Cat
       count(distinct c.id)::int as comment_count
     from issues i
     left join votes v on v.issue_id = i.id
-    left join comments c on c.issue_id = i.id and c.is_hidden = false
+    left join comments c on c.issue_id = i.id and coalesce(c.is_hidden, false) = false
     where (${query} = '' or i.title ilike ${`%${query}%`} or i.description ilike ${`%${query}%`})
       and (${category ?? null}::text is null or i.category = ${category ?? null})
     group by i.id
@@ -109,6 +132,8 @@ export async function listIssuesFromDb(options: { query?: string; category?: Cat
 export async function findIssueFromDb(id: string, includePrivate = false) {
   const sql = getDatabase();
   if (!sql) return null;
+  // DETAIL QUERY — single issue + its visible thread.
+  // Same COALESCE guard as the feed query: old DBs may lack the flags.
   const rows = await sql<Record<string, unknown>[]>`
     select i.id, i.title, i.description, i.category, i.status, i.is_anonymous, i.author_id, i.author_name_snapshot, i.image_url, i.official_reply, i.official_reply_at, i.created_at, i.updated_at,
       coalesce(sum(case when v.direction = 'up' then 1 else 0 end), 0)::int as upvotes,
@@ -116,13 +141,15 @@ export async function findIssueFromDb(id: string, includePrivate = false) {
       count(distinct c.id)::int as comment_count
     from issues i
     left join votes v on v.issue_id = i.id
-    left join comments c on c.issue_id = i.id and c.is_hidden = false
+    left join comments c on c.issue_id = i.id and coalesce(c.is_hidden, false) = false
     where i.id = ${id}
     group by i.id
     limit 1
   `;
   if (!rows[0]) return null;
-  const commentsRows = await sql<Record<string, unknown>[]>`select c.id, c.body, c.created_at, c.is_anonymous, c.author_id, c.author_name_snapshot from comments c where c.issue_id = ${id} and c.is_hidden = false order by c.created_at asc`;
+  // Thread read: is_anonymous may be absent pre-0001. COALESCE keeps the
+  // select valid on old DBs; toComment() above defaults it to false.
+  const commentsRows = await sql<Record<string, unknown>[]>`select c.id, c.body, c.created_at, coalesce(c.is_anonymous, false) as is_anonymous, c.author_id, c.author_name_snapshot from comments c where c.issue_id = ${id} and coalesce(c.is_hidden, false) = false order by c.created_at asc`;
   const comments = commentsRows.map((comment) => toComment(comment, includePrivate));
   return rowToIssue(rows[0], comments);
 }
@@ -189,6 +216,8 @@ export async function getAdminSummaryFromDb(): Promise<AdminSummary | null> {
 export async function listMyIssuesFromDb(authorId: string) {
   const sql = getDatabase();
   if (!sql) return null;
+  // PROFILE QUERY — only the viewer's own issues (no user directory).
+  // Same COALESCE guard for old DBs missing comment flags.
   const rows = await sql<Record<string, unknown>[]>`
     select i.id, i.title, i.description, i.category, i.status, i.is_anonymous, i.author_id, i.author_name_snapshot, i.image_url, i.official_reply, i.official_reply_at, i.created_at, i.updated_at,
       coalesce(sum(case when v.direction = 'up' then 1 else 0 end), 0)::int as upvotes,
@@ -196,7 +225,7 @@ export async function listMyIssuesFromDb(authorId: string) {
       count(distinct c.id)::int as comment_count
     from issues i
     left join votes v on v.issue_id = i.id
-    left join comments c on c.issue_id = i.id and c.is_hidden = false
+    left join comments c on c.issue_id = i.id and coalesce(c.is_hidden, false) = false
     where i.author_id = ${authorId}
     group by i.id
     order by i.created_at desc
