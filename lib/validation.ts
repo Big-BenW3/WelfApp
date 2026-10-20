@@ -1,3 +1,6 @@
+// ─── Request validation (single source of truth) ────────────────────────────
+// Every API route parses with one of these schemas first; client forms mirror
+// the same minimum lengths so errors feel identical on both sides.
 import { z } from "zod";
 import { CATEGORIES, STATUSES } from "./types";
 

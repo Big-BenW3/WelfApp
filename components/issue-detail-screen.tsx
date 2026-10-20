@@ -1,4 +1,7 @@
 "use client";
+// ─── IssueDetailScreen (client island for /issues/[id]) ─────────────────────
+// Owns: voting, comment composer (anonymous toggle), inline report form.
+// Server page passes initialIssue; official reply + status rail are read-only.
 import { useState } from "react";
 import { AlertCircle, ArrowDown, ArrowUp, CheckCircle2, Flag, MessageCircle } from "lucide-react";
 import type { Issue, VoteDirection } from "@/lib/types";
@@ -46,6 +49,8 @@ export function IssueDetailScreen({ initialIssue }: { initialIssue: Issue }) {
       const payload = await response.json().catch(() => ({}));
       flash(response.ok ? payload.message : (payload.error ?? "Could not send the report."));
     } catch { flash("You seem to be offline. Try reporting again soon."); }
+    setReporting(false); setReportReason("");
+  };
   return (
     <>
       <div className="detail-grid"><div>
@@ -60,6 +65,3 @@ export function IssueDetailScreen({ initialIssue }: { initialIssue: Issue }) {
     </>
   );
 }
-
-    finally { setReporting(false); setReportReason(""); }
-  };

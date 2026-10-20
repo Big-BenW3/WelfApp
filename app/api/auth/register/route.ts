@@ -1,3 +1,6 @@
+// ─── Register API ───────────────────────────────────────────────────────────
+// POST /api/auth/register { email, password, displayName }
+// Rate-limited per IP, then creates user + session cookie (see lib/auth/session).
 import { NextRequest } from "next/server";
 import { error, ok } from "@/lib/api";
 import { createSession } from "@/lib/auth/session";

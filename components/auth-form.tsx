@@ -1,4 +1,7 @@
 "use client";
+// ─── AuthForm (shared by /login + /register) ────────────────────────────────
+// mode="register" adds displayName (pseudonyms OK). Field-level errors mirror
+// lib/validation.ts; submit POSTs to /api/auth/* then hard-redirects to /app.
 import Link from "next/link";
 import { useState } from "react";
 import { AlertCircle } from "lucide-react";

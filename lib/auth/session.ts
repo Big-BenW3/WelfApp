@@ -1,3 +1,6 @@
+// ─── Auth session (httpOnly JWT cookie) ─────────────────────────────────────
+// Used by: API routes via requireSession() · pages via getSession().
+// Roles: "student" (default) vs "admin" (Welfare office). Admin routes pass "admin".
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import type { PublicUser } from "../types";

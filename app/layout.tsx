@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+// ─── Root layout ────────────────────────────────────────────────────────────
+// Wraps every route: global CSS, SEO/OpenGraph defaults (see public/og-image.svg).
+// Individual pages override title/description via their own `metadata` export.
 import "./globals.css";
 
 const siteUrl = process.env.NEXT_PUBLIC_APP_URL;

@@ -1,4 +1,7 @@
 "use client";
+// ─── FaqAccordion (landing #faq) ────────────────────────────────────────────
+// Single-open accordion: one answer visible at a time, arrow toggles,
+// answers may carry a CTA link (linkLabel/linkHref) like the Synthesia inspo.
 import Link from "next/link";
 import { useState } from "react";
 import { ArrowRight, ArrowUpRight } from "lucide-react";

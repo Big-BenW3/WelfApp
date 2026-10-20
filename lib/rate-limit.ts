@@ -1,3 +1,6 @@
+// ─── In-memory rate limiter (per server instance) ───────────────────────────
+// Usage: rateLimit(`register:${ip}`, 6, 60_000). Guards auth + write routes.
+// NOTE: resets on redeploy; swap for Redis/Upstash before horizontal scaling.
 type Entry = { count: number; resetAt: number };
 
 const entries = new Map<string, Entry>();

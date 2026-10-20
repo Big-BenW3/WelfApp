@@ -1,3 +1,5 @@
+// --- Profile page (/app/profile, private) ---
+// Server: getSession() gate; listMyIssues(viewerId) only — never another user.
 import { AppNav } from "@/components/app-nav";
 import { ProfileScreen } from "@/components/profile-screen";
 import { getSession } from "@/lib/auth/session";

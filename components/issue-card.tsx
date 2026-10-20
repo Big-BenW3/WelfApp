@@ -1,3 +1,6 @@
+// ─── IssueCard (feed + search + profile rows) ───────────────────────────────
+// Pure presentational card: category tag, status badge, excerpt, meta line.
+// Pass onVote to make it votable (feed); omit for read-only lists (search/profile).
 import Link from "next/link";
 import { ArrowDown, ArrowUp, MessageCircle } from "lucide-react";
 import { formatRelativeTime, statusClass, type Issue, type VoteDirection } from "@/lib/types";

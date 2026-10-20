@@ -1,3 +1,5 @@
+// --- Search page (/app/search) ---
+// Server: preloads trending; SearchScreen island debounces filters client-side.
 import { AppNav } from "@/components/app-nav";
 import { SearchScreen } from "@/components/search-screen";
 import { listIssues } from "@/lib/store";

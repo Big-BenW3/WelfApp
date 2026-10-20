@@ -1,3 +1,6 @@
+// ─── Store (page + API entry points) ────────────────────────────────────────
+// Thin wrappers over lib/db/repository.ts. Always require DATABASE_URL —
+// demo mode was removed. Privacy: listMyIssues() only returns the viewer's own.
 import { hasDatabase } from "./db/client";
 import {
   addCommentInDb,

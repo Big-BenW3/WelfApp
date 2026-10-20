@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { ArrowRight, Home } from "lucide-react";
 
+// ─── 404 (reuses the finale CTA panel) ──────────────────────────────────────
+// Same dotted .finale-card as the landing bottom so dead ends still convert:
+// "Back to Wella" (/) + "Open the feed" (/app). No data fetching here.
 export default function NotFound() {
   return (
     <main className="site-shell">

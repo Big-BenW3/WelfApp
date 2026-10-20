@@ -1,3 +1,7 @@
+// ─── DB client (lazy singleton) ─────────────────────────────────────────────
+// getDatabase() returns null when DATABASE_URL is unset (store.ts then throws
+// a clear error). hasDatabase() is the cheap check for guards. Uses `postgres`
+// with prepare:false for Neon/pooler compatibility.
 import postgres, { type Sql } from "postgres";
 
 let client: Sql | null = null;

@@ -1,3 +1,5 @@
+// --- Login page (/login, logged-out) ---
+// Split layout: dark visual panel + AuthForm mode=login. noindex.
 import Link from "next/link";
 import { Brand } from "@/components/brand";
 import { AuthForm } from "@/components/auth-form";

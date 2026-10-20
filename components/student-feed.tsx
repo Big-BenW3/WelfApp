@@ -1,4 +1,7 @@
 "use client";
+// ─── StudentFeed (client island for /app) ───────────────────────────────────
+// Owns: sort tabs → GET /api/issues?sort= · optimistic voting → POST vote ·
+// create modal + toasts. Server page (app/app/page.tsx) only passes initialIssues.
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, Plus, WifiOff } from "lucide-react";

@@ -1,4 +1,7 @@
 "use client";
+// ─── SearchScreen (client island for /app/search) ───────────────────────────
+// Debounced (300ms) query + category tabs → GET /api/issues?q=&category=.
+// Shows skeletons while loading, helpful empty state with "clear filters".
 import { useEffect, useState } from "react";
 import { Search, SearchX, WifiOff } from "lucide-react";
 import { CATEGORIES, type Category, type Issue } from "@/lib/types";

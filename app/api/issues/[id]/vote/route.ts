@@ -1,3 +1,6 @@
+// ─── Vote API ───────────────────────────────────────────────────────────────
+// POST /api/issues/[id]/vote { direction: "up" | "down" | null }
+// Login required; one vote per user per issue (upsert on conflict).
 import { NextRequest } from "next/server";
 import { error, ok } from "@/lib/api";
 import { requireSession } from "@/lib/auth/session";

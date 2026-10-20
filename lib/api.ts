@@ -1,3 +1,6 @@
+// ─── API response helpers ───────────────────────────────────────────────────
+// ok(data) → 200 JSON · error(msg, status) → { error } JSON.
+// Every route returns one of these so clients read payload.error uniformly.
 import { NextResponse } from "next/server";
 
 export function ok<T>(data: T, init?: ResponseInit) {

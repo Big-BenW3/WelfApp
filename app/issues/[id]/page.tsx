@@ -1,3 +1,5 @@
+// --- Issue page (/issues/[id]) ---
+// Server: loads issue via getIssue(id), notFound() when missing.
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { AppNav } from "@/components/app-nav";

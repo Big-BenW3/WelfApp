@@ -1,3 +1,5 @@
+// --- Register page (/register, logged-out) ---
+// Same split layout; AuthForm mode=register adds pseudonym-friendly displayName.
 import Link from "next/link";
 import { Brand } from "@/components/brand";
 import { AuthForm } from "@/components/auth-form";

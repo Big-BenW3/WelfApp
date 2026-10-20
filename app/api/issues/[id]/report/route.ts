@@ -1,3 +1,6 @@
+// --- Report API ---
+// POST /api/issues/[id]/report { reason } -> login required.
+// MVP acknowledges receipt; production persists to the reports table.
 import { NextRequest } from "next/server";
 import { error, ok } from "@/lib/api";
 import { requireSession } from "@/lib/auth/session";

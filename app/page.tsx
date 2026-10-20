@@ -1,4 +1,8 @@
 import Link from "next/link";
+// ─── Landing (/) — section map ──────────────────────────────────────────────
+// hero → #how-it-works → #categories → #privacy → #faq (FaqAccordion) →
+// FinaleCta → footer. Data: `categories` icons, `faqs` with answer CTA links.
+// Styles: .hero*, .steps, .category-*, .split-feature, .faq-*, .finale-*.
 import { ArrowRight, Check, CircleHelp, GraduationCap, HeartPulse, House, MessageCircle, ShieldCheck, Trophy } from "lucide-react";
 import { Brand } from "@/components/brand";
 import { FaqAccordion } from "@/components/faq-accordion";

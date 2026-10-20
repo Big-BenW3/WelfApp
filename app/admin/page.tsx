@@ -1,3 +1,5 @@
+// --- Admin page (/admin, role-gated) ---
+// Server: session.role must equal admin or a locked empty-state renders.
 import Link from "next/link";
 import { AppNav } from "@/components/app-nav";
 import { AdminDashboard } from "@/components/admin-dashboard";

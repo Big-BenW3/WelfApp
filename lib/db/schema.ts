@@ -1,3 +1,6 @@
+// ─── Drizzle schema (source of truth for columns) ───────────────────────────
+// Mirrors db/migrations/*.sql. If you add a column here, generate + apply a
+// migration — raw SQL in repository.ts must keep matching.
 import { boolean, integer, pgTable, text, timestamp, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {

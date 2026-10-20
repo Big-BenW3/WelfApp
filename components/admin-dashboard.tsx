@@ -1,5 +1,8 @@
 "use client";
 
+// ─── AdminDashboard (Welfare-office workspace, role-gated) ──────────────────
+// Stats + trending queue; status <select> PATCHes /api/admin/issues/[id]/status
+// and updates optimistically. Page guard lives in app/admin/page.tsx.
 import { useState } from "react";
 import { ArrowRight, CheckCircle2, Clock3, ShieldCheck } from "lucide-react";
 import type { AdminSummary, Issue, IssueStatus } from "@/lib/types";

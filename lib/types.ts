@@ -1,3 +1,6 @@
+// ─── Wella shared domain model ──────────────────────────────────────────────
+// Start here if you are new: categories, statuses, and the public shapes
+// every page and API route passes around. Privacy helpers live at the bottom.
 export const CATEGORIES = ["Hostel", "Academic", "Sports", "Health", "SUG"] as const;
 export type Category = (typeof CATEGORIES)[number];
 

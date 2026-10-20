@@ -1,3 +1,6 @@
+// ─── Issues API ─────────────────────────────────────────────────────────────
+// GET  /api/issues?q=&category=&sort=  → public feed (no login needed)
+// POST /api/issues                    → login required, validated by createIssueSchema
 import { NextRequest } from "next/server";
 import { error, ok } from "@/lib/api";
 import { requireSession } from "@/lib/auth/session";

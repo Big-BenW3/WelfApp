@@ -1,3 +1,6 @@
+// ─── Login API ──────────────────────────────────────────────────────────────
+// POST /api/auth/login { email, password } → sets session cookie on success.
+// Generic error ("not recognised") so attackers can't probe which emails exist.
 import { NextRequest } from "next/server";
 import { error, ok } from "@/lib/api";
 import { verifyPassword } from "@/lib/auth/password";

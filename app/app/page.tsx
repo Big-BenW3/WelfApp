@@ -1,3 +1,5 @@
+// --- Feed page (/app) ---
+// Server: trending issues via listIssues(); ?create=1 auto-opens the modal.
 import { listIssues } from "@/lib/store";
 import { AppNav } from "@/components/app-nav";
 import { StudentFeed } from "@/components/student-feed";

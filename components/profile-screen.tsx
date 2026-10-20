@@ -1,5 +1,8 @@
 "use client";
 
+// ─── ProfileScreen (/app/profile, private) ──────────────────────────────────
+// Viewer-only: session header + the viewer's own issues via listMyIssues().
+// No user lookup, no directory — anonymous posts stay anonymous even here.
 import Link from "next/link";
 import { LogOut } from "lucide-react";
 import type { Issue } from "@/lib/types";

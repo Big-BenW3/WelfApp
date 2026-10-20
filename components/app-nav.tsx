@@ -1,3 +1,6 @@
+// ─── AppNav (authenticated chrome) ──────────────────────────────────────────
+// Desktop topbar + mobile bottom nav. `active` highlights the current section;
+// `isAdmin` reveals the Welfare-office link. Create button deep-links ?create=1.
 import Link from "next/link";
 import { FilePlus2, House, Search, Settings2, ShieldCheck } from "lucide-react";
 import { Brand } from "./brand";

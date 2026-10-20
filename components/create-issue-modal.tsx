@@ -1,4 +1,7 @@
 "use client";
+// ─── CreateIssueModal (opened from feed FAB / nav) ──────────────────────────
+// Validates title ≥8 / description ≥24 / optional photo URL client-side,
+// then POSTs to /api/issues. Esc/backdrop closes; parent prepends on onCreated.
 import { useEffect, useState } from "react";
 import { AlertCircle, X } from "lucide-react";
 import { CATEGORIES } from "@/lib/types";

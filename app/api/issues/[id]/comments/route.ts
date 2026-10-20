@@ -1,3 +1,6 @@
+// --- Comment API ---
+// POST /api/issues/[id]/comments { body, isAnonymous } -> login required.
+// Validated by commentSchema; anonymous authors hidden from public reads.
 import { NextRequest } from "next/server";
 import { error, ok } from "@/lib/api";
 import { requireSession } from "@/lib/auth/session";

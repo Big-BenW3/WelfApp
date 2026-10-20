@@ -1,3 +1,6 @@
+// ─── Admin status API (role-gated) ──────────────────────────────────────────
+// PATCH /api/admin/issues/[id]/status { status, note? }
+// requireSession("admin") rejects students; writes admin_actions audit row.
 import { NextRequest } from "next/server";
 import { error, ok } from "@/lib/api";
 import { requireSession } from "@/lib/auth/session";

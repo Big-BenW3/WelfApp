@@ -1,4 +1,7 @@
 "use client";
+// ─── FinaleCta (landing bottom) ─────────────────────────────────────────────
+// DocsAlot-style centered panel: dotted grid + glow, mono kicker, dual actions
+// (/register primary, /app secondary) + micro trust row. Styles: .finale-*.
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
