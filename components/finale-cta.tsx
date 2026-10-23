@@ -19,8 +19,8 @@ export function FinaleCta() {
             Make sure the union hears the right version.
           </h2>
           <p className="finale-sub">
-            Wella turns scattered welfare complaints into a visible, accountable queue
-            the student community can move together.
+            Wella turns scattered welfare complaints into a visible, accountable queue the student
+            community can move together.
           </p>
           <div className="finale-actions">
             <Link className="button primary finale-primary" href="/register">
@@ -30,7 +30,9 @@ export function FinaleCta() {
               Open the public feed
             </Link>
           </div>
-          <p className="finale-micro">2-min setup &middot; no real name needed &middot; SUG-monitored queue</p>
+          <p className="finale-micro">
+            2-min setup &middot; no real name needed &middot; SUG-monitored queue
+          </p>
         </div>
       </div>
     </section>

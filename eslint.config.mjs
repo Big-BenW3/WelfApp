@@ -6,4 +6,3 @@ export default [
     ignores: [".next/**", "node_modules/**", "db/migrations/**"],
   },
 ];
-

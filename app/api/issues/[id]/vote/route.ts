@@ -14,7 +14,12 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
   const body = await request.json().catch(() => null);
   const parsed = voteSchema.safeParse(body);
   if (!parsed.success) return error("Choose an upvote, downvote, or remove your vote.");
-  const result = await voteIssue(id, auth.session.userId, parsed.data.direction, parsed.data.isAnonymous);
+  const result = await voteIssue(
+    id,
+    auth.session.userId,
+    parsed.data.direction,
+    parsed.data.isAnonymous,
+  );
   if (!result) return error("Issue not found.", 404);
   return ok({ counts: result });
 }

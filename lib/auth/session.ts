@@ -23,7 +23,9 @@ export async function createSession(user: PublicUser & { role?: string }) {
   );
 
   const store = await cookies();
-  const isPreview = process.env.NEXT_PUBLIC_APP_URL?.startsWith("https://") || process.env.NODE_ENV === "production";
+  const isPreview =
+    process.env.NEXT_PUBLIC_APP_URL?.startsWith("https://") ||
+    process.env.NODE_ENV === "production";
   store.set(COOKIE_NAME, token, {
     httpOnly: true,
     secure: isPreview,
@@ -47,6 +49,11 @@ export async function getSession(): Promise<SessionClaims | null> {
 export async function requireSession(role?: "admin") {
   const session = await getSession();
   if (!session) return { ok: false as const, status: 401, message: "Please log in to continue." };
-  if (role === "admin" && session.role !== "admin") return { ok: false as const, status: 403, message: "You do not have access to this workspace." };
+  if (role === "admin" && session.role !== "admin")
+    return {
+      ok: false as const,
+      status: 403,
+      message: "You do not have access to this workspace.",
+    };
   return { ok: true as const, session };
 }

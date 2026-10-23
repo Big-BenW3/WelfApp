@@ -92,17 +92,33 @@ describe("validation — createIssueSchema", () => {
     expect(createIssueSchema.safeParse({ ...base, category: "Illegal" }).success).toBe(false);
   });
   it("requires imageType and imageSize when imageUrl is provided", () => {
-    expect(createIssueSchema.safeParse({ ...base, imageUrl: "https://example.com/photo.jpg" }).success).toBe(false);
+    expect(
+      createIssueSchema.safeParse({ ...base, imageUrl: "https://example.com/photo.jpg" }).success,
+    ).toBe(false);
   });
   it("accepts imageUrl without type/size when empty", () => {
     expect(createIssueSchema.parse({ ...base, imageUrl: "" })).toBeDefined();
   });
   it("rejects non-URL imageUrl", () => {
-    expect(createIssueSchema.safeParse({ ...base, imageUrl: "not-a-url", imageType: "image/jpeg", imageSize: 1000 }).success).toBe(false);
+    expect(
+      createIssueSchema.safeParse({
+        ...base,
+        imageUrl: "not-a-url",
+        imageType: "image/jpeg",
+        imageSize: 1000,
+      }).success,
+    ).toBe(false);
   });
   it("imageUrl max 2000 chars", () => {
     const longUrl = "https://example.com/" + "a".repeat(1990);
-    expect(createIssueSchema.safeParse({ ...base, imageUrl: longUrl, imageType: "image/jpeg", imageSize: 1000 }).success).toBe(false);
+    expect(
+      createIssueSchema.safeParse({
+        ...base,
+        imageUrl: longUrl,
+        imageType: "image/jpeg",
+        imageSize: 1000,
+      }).success,
+    ).toBe(false);
   });
 });
 
@@ -149,7 +165,14 @@ describe("validation — reportSchema", () => {
 });
 
 describe("validation — adminStatusSchema", () => {
-  const validStatuses = ["Under Review", "Seen", "In Progress", "Resolved", "Rejected", "Duplicate"];
+  const validStatuses = [
+    "Under Review",
+    "Seen",
+    "In Progress",
+    "Resolved",
+    "Rejected",
+    "Duplicate",
+  ];
   it("accepts all valid statuses", () => {
     for (const status of validStatuses) {
       expect(adminStatusSchema.parse({ status }).status).toBe(status);
@@ -163,7 +186,9 @@ describe("validation — adminStatusSchema", () => {
     expect(result.note).toBe("Fixed");
   });
   it("rejects note > 1000 chars", () => {
-    expect(adminStatusSchema.safeParse({ status: "Resolved", note: "a".repeat(1001) }).success).toBe(false);
+    expect(
+      adminStatusSchema.safeParse({ status: "Resolved", note: "a".repeat(1001) }).success,
+    ).toBe(false);
   });
 });
 

@@ -13,7 +13,16 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
   const { id } = await context.params;
   const parsed = adminStatusSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return error(parsed.error.issues[0]?.message ?? "Choose a valid status.");
-  const updated = await updateIssueStatus(id, parsed.data.status, auth.session.userId, parsed.data.note);
-  if (!updated) return error("This issue was just updated or no longer exists. Refresh to see the latest state.", 409);
+  const updated = await updateIssueStatus(
+    id,
+    parsed.data.status,
+    auth.session.userId,
+    parsed.data.note,
+  );
+  if (!updated)
+    return error(
+      "This issue was just updated or no longer exists. Refresh to see the latest state.",
+      409,
+    );
   return ok({ updated });
 }

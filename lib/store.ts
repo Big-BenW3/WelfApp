@@ -12,16 +12,14 @@ import {
   updateIssueStatusInDb,
   voteInDb,
 } from "./db/repository";
-import type {
-  Category,
-  Issue,
-  IssueStatus,
-  SortMode,
-  VoteDirection,
-} from "./types";
+import type { Category, Issue, IssueStatus, SortMode, VoteDirection } from "./types";
 
 function shouldSkipDatabase() {
-  return !hasDatabase() || process.env.NEXT_PHASE === "phase-production-build" || process.env.NODE_ENV === "test";
+  return (
+    !hasDatabase() ||
+    process.env.NEXT_PHASE === "phase-production-build" ||
+    process.env.NODE_ENV === "test"
+  );
 }
 
 function requireDatabase() {
@@ -32,11 +30,13 @@ function requireDatabase() {
   }
 }
 
-export async function listIssues(options: {
-  query?: string;
-  category?: Category;
-  sort?: SortMode;
-} = {}) {
+export async function listIssues(
+  options: {
+    query?: string;
+    category?: Category;
+    sort?: SortMode;
+  } = {},
+) {
   if (shouldSkipDatabase()) {
     return [] as Issue[];
   }
@@ -144,4 +144,3 @@ export async function getAdminSummary() {
   if (!summary) throw new Error("Could not load the admin summary.");
   return summary;
 }
-

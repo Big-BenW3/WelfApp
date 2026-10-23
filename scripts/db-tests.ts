@@ -1,4 +1,3 @@
-
 import postgres from "postgres";
 
 async function main() {

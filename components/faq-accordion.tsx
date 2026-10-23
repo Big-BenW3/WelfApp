@@ -16,13 +16,34 @@ export function FaqAccordion({ items }: { items: FaqItem[] }) {
         const isOpen = open === i;
         return (
           <div key={item.q} role="listitem" className={isOpen ? "faq-item open" : "faq-item"}>
-            <button type="button" className="faq-q" aria-expanded={isOpen} aria-controls={"faq-panel-" + i} id={"faq-button-" + i} onClick={() => setOpen(isOpen ? null : i)}>
+            <button
+              type="button"
+              className="faq-q"
+              aria-expanded={isOpen}
+              aria-controls={"faq-panel-" + i}
+              id={"faq-button-" + i}
+              onClick={() => setOpen(isOpen ? null : i)}
+            >
               <span>{item.q}</span>
-              <span className="faq-arrow" aria-hidden="true">{isOpen ? <ArrowUpRight size={16} /> : <ArrowRight size={16} />}</span>
+              <span className="faq-arrow" aria-hidden="true">
+                {isOpen ? <ArrowUpRight size={16} /> : <ArrowRight size={16} />}
+              </span>
             </button>
-            <div id={"faq-panel-" + i} role="region" aria-labelledby={"faq-button-" + i} className="faq-a-wrap">
+            <div
+              id={"faq-panel-" + i}
+              role="region"
+              aria-labelledby={"faq-button-" + i}
+              className="faq-a-wrap"
+            >
               <div className="faq-a-inner">
-                <p className="faq-a">{item.a} {item.linkLabel && item.linkHref ? <Link href={item.linkHref} className="faq-link">{item.linkLabel}</Link> : null}</p>
+                <p className="faq-a">
+                  {item.a}{" "}
+                  {item.linkLabel && item.linkHref ? (
+                    <Link href={item.linkHref} className="faq-link">
+                      {item.linkLabel}
+                    </Link>
+                  ) : null}
+                </p>
               </div>
             </div>
           </div>

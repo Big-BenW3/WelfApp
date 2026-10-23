@@ -163,7 +163,11 @@ if (!hasLiveDb) {
 
     it("addReportToDb persists a report", async () => {
       const { addReportToDb } = await import("./repository");
-      const report = await addReportToDb(testIssueId, testUserId, "This is a test report reason that is long enough.");
+      const report = await addReportToDb(
+        testIssueId,
+        testUserId,
+        "This is a test report reason that is long enough.",
+      );
       expect(report).not.toBeNull();
       expect(report?.reason).toBe("This is a test report reason that is long enough.");
       createdReportIds.push(String(report?.id));
@@ -171,7 +175,13 @@ if (!hasLiveDb) {
 
     it("addReportToDb returns null for nonexistent issue", async () => {
       const { addReportToDb } = await import("./repository");
-      expect(await addReportToDb("00000000-0000-0000-0000-000000000000", testUserId, "Test report reason here.")).toBeNull();
+      expect(
+        await addReportToDb(
+          "00000000-0000-0000-0000-000000000000",
+          testUserId,
+          "Test report reason here.",
+        ),
+      ).toBeNull();
     });
 
     it("listMyIssuesFromDb returns only the user's issues", async () => {
@@ -185,12 +195,14 @@ if (!hasLiveDb) {
 
     it("updateIssueStatusInDb changes issue status", async () => {
       const { updateIssueStatusInDb } = await import("./repository");
-      const result = await updateIssueStatusInDb(testIssueId, "Resolved", testUserId, "Test resolution note.");
+      const result = await updateIssueStatusInDb(
+        testIssueId,
+        "Resolved",
+        testUserId,
+        "Test resolution note.",
+      );
       expect(result).not.toBeNull();
       expect(result?.version).toBeGreaterThanOrEqual(2);
     });
   });
 }
-
-
-

@@ -35,10 +35,7 @@ function publicUser(id: string | null, displayName: string | null) {
   return { id, displayName, initials: initialsFor(displayName) };
 }
 
-function toComment(
-  row: Record<string, unknown>,
-  includePrivate: boolean,
-): Comment {
+function toComment(row: Record<string, unknown>, includePrivate: boolean): Comment {
   // NOTE: older databases may not have comments.is_anonymous yet (see
   // db/migrations/0001_comment_anonymity.sql). Treat a missing column as
   // "not anonymous" so reads keep working until the migration is applied.
@@ -59,7 +56,11 @@ function toComment(
   };
 }
 
-function rowToIssue(row: Record<string, unknown>, comments: Comment[] = [], includePrivate = false): Issue {
+function rowToIssue(
+  row: Record<string, unknown>,
+  comments: Comment[] = [],
+  includePrivate = false,
+): Issue {
   const status = String(row.status) as IssueStatus;
   return {
     id: String(row.id),
@@ -74,12 +75,21 @@ function rowToIssue(row: Record<string, unknown>, comments: Comment[] = [], incl
     createdAt: new Date(String(row.created_at)).toISOString(),
     // Privacy: anonymous issue authors are hidden from public reads.
     // Admin paths (includePrivate=true) see the snapshot author for moderation.
-    author: row.is_anonymous && !includePrivate
-      ? null
-      : publicUser(row.author_id ? String(row.author_id) : null, row.author_name_snapshot ? String(row.author_name_snapshot) : null),
+    author:
+      row.is_anonymous && !includePrivate
+        ? null
+        : publicUser(
+            row.author_id ? String(row.author_id) : null,
+            row.author_name_snapshot ? String(row.author_name_snapshot) : null,
+          ),
     isAnonymous: Boolean(row.is_anonymous),
     imageUrl: row.image_url ? String(row.image_url) : undefined,
-    officialReply: row.official_reply ? { body: String(row.official_reply), createdAt: new Date(String(row.official_reply_at ?? row.updated_at)).toISOString() } : undefined,
+    officialReply: row.official_reply
+      ? {
+          body: String(row.official_reply),
+          createdAt: new Date(String(row.official_reply_at ?? row.updated_at)).toISOString(),
+        }
+      : undefined,
     comments,
   };
 }
@@ -87,14 +97,18 @@ function rowToIssue(row: Record<string, unknown>, comments: Comment[] = [], incl
 export async function findUserByEmail(email: string): Promise<UserRecord | null> {
   const sql = getDatabase();
   if (!sql) return null;
-  const rows = await sql<UserRecord[]>`select id, email, password_hash as "passwordHash", display_name as "displayName", role from users where email = ${email} and deleted_at is null limit 1`;
+  const rows = await sql<
+    UserRecord[]
+  >`select id, email, password_hash as "passwordHash", display_name as "displayName", role from users where email = ${email} and deleted_at is null limit 1`;
   return rows[0] ?? null;
 }
 
 export async function createUser(email: string, passwordHash: string, displayName: string) {
   const sql = getDatabase();
   if (!sql) return null;
-  const rows = await sql<UserRecord[]>`insert into users (email, password_hash, display_name) values (${email}, ${passwordHash}, ${displayName}) returning id, email, password_hash as "passwordHash", display_name as "displayName", role`;
+  const rows = await sql<
+    UserRecord[]
+  >`insert into users (email, password_hash, display_name) values (${email}, ${passwordHash}, ${displayName}) returning id, email, password_hash as "passwordHash", display_name as "displayName", role`;
   return rows[0] ?? null;
 }
 
@@ -146,24 +160,47 @@ export async function findIssueFromDb(id: string, includePrivate = false) {
     limit 1
   `;
   if (!rows[0]) return null;
-  const commentsRows = await sql<Record<string, unknown>[]>`select c.id, c.body, c.created_at, coalesce(c.is_anonymous, false) as is_anonymous, c.author_id, c.author_name_snapshot from comments c where c.issue_id = ${id} and coalesce(c.is_hidden, false) = false order by c.created_at asc`;
-  const comments = commentsRows.map((comment: Record<string, unknown>) => toComment(comment, includePrivate));
+  const commentsRows = await sql<
+    Record<string, unknown>[]
+  >`select c.id, c.body, c.created_at, coalesce(c.is_anonymous, false) as is_anonymous, c.author_id, c.author_name_snapshot from comments c where c.issue_id = ${id} and coalesce(c.is_hidden, false) = false order by c.created_at asc`;
+  const comments = commentsRows.map((comment: Record<string, unknown>) =>
+    toComment(comment, includePrivate),
+  );
   return rowToIssue(rows[0], comments, includePrivate);
 }
 
-export async function createIssueInDb(input: { title: string; description: string; category: Category; isAnonymous: boolean; imageUrl?: string }, author: { id: string; displayName: string }) {
+export async function createIssueInDb(
+  input: {
+    title: string;
+    description: string;
+    category: Category;
+    isAnonymous: boolean;
+    imageUrl?: string;
+  },
+  author: { id: string; displayName: string },
+) {
   const sql = getDatabase();
   if (!sql) return null;
-  const rows = await sql<Record<string, unknown>[]>`insert into issues (title, description, category, is_anonymous, author_id, author_name_snapshot, image_url) values (${input.title}, ${input.description}, ${input.category}, ${input.isAnonymous}, ${author.id}, ${author.displayName}, ${input.imageUrl || null}) returning id`;
+  const rows = await sql<
+    Record<string, unknown>[]
+  >`insert into issues (title, description, category, is_anonymous, author_id, author_name_snapshot, image_url) values (${input.title}, ${input.description}, ${input.category}, ${input.isAnonymous}, ${author.id}, ${author.displayName}, ${input.imageUrl || null}) returning id`;
   return rows[0]?.id ? findIssueFromDb(String(rows[0].id)) : null;
 }
 
-export async function voteInDb(issueId: string, userId: string, direction: VoteDirection | null, isAnonymous: boolean) {
+export async function voteInDb(
+  issueId: string,
+  userId: string,
+  direction: VoteDirection | null,
+  isAnonymous: boolean,
+) {
   const sql = getDatabase();
   if (!sql) return null;
   if (!direction) await sql`delete from votes where issue_id = ${issueId} and user_id = ${userId}`;
-  else await sql`insert into votes (issue_id, user_id, direction, is_anonymous) values (${issueId}, ${userId}, ${direction}, ${isAnonymous}) on conflict (issue_id, user_id) do update set direction = excluded.direction, is_anonymous = excluded.is_anonymous`;
-  const rows = await sql<{ upvotes: number; downvotes: number }[]>`select count(*) filter (where direction = 'up')::int as upvotes, count(*) filter (where direction = 'down')::int as downvotes from votes where issue_id = ${issueId}`;
+  else
+    await sql`insert into votes (issue_id, user_id, direction, is_anonymous) values (${issueId}, ${userId}, ${direction}, ${isAnonymous}) on conflict (issue_id, user_id) do update set direction = excluded.direction, is_anonymous = excluded.is_anonymous`;
+  const rows = await sql<
+    { upvotes: number; downvotes: number }[]
+  >`select count(*) filter (where direction = 'up')::int as upvotes, count(*) filter (where direction = 'down')::int as downvotes from votes where issue_id = ${issueId}`;
   return rows[0] ?? { upvotes: 0, downvotes: 0 };
 }
 
@@ -175,7 +212,9 @@ export async function addCommentInDb(
 ) {
   const sql = getDatabase();
   if (!sql) return null;
-  const rows = await sql<Record<string, unknown>[]>`insert into comments (issue_id, author_id, author_name_snapshot, body, is_anonymous) values (${issueId}, ${author.id}, ${author.displayName}, ${body}, ${isAnonymous}) returning id, body, created_at, is_anonymous`;
+  const rows = await sql<
+    Record<string, unknown>[]
+  >`insert into comments (issue_id, author_id, author_name_snapshot, body, is_anonymous) values (${issueId}, ${author.id}, ${author.displayName}, ${body}, ${isAnonymous}) returning id, body, created_at, is_anonymous`;
   const row = rows[0];
   if (!row) return null;
   return toComment(
@@ -191,11 +230,18 @@ export async function addCommentInDb(
   );
 }
 
-export async function updateIssueStatusInDb(id: string, status: IssueStatus, adminId: string, note?: string) {
+export async function updateIssueStatusInDb(
+  id: string,
+  status: IssueStatus,
+  adminId: string,
+  note?: string,
+) {
   const sql = getDatabase();
   if (!sql) return null;
   const reply = note ?? null;
-  const rows = await sql<Record<string, unknown>[]>`update issues set status = ${status}, official_reply = coalesce(${reply}::text, official_reply), official_reply_at = case when ${reply}::text is not null then now() else official_reply_at end, version = version + 1, updated_at = now() where id = ${id} returning id, version`;
+  const rows = await sql<
+    Record<string, unknown>[]
+  >`update issues set status = ${status}, official_reply = coalesce(${reply}::text, official_reply), official_reply_at = case when ${reply}::text is not null then now() else official_reply_at end, version = version + 1, updated_at = now() where id = ${id} returning id, version`;
   if (!rows[0]) return null;
   await sql`insert into admin_actions (admin_id, issue_id, action, note) values (${adminId}, ${id}, ${`status:${status}`}, ${reply}::text)`;
   return rows[0];
@@ -204,9 +250,24 @@ export async function updateIssueStatusInDb(id: string, status: IssueStatus, adm
 export async function getAdminSummaryFromDb(): Promise<AdminSummary | null> {
   const issues = await listIssuesFromDb({ sort: "trending" });
   if (!issues) return null;
-  const topCategory = issues.reduce<Record<string, number>>((acc: Record<string, number>, issue: Issue) => ({ ...acc, [issue.category]: (acc[issue.category] ?? 0) + 1 }), {});
-  const category = (Object.entries(topCategory).sort((a: [string, number], b: [string, number]) => b[1] - a[1])[0]?.[0] ?? "Hostel") as Category;
-  return { openIssues: issues.filter((issue: Issue) => !["Resolved", "Rejected", "Duplicate"].includes(issue.status)).length, resolvedThisWeek: issues.filter((issue: Issue) => issue.status === "Resolved").length, topCategory: category, trending: issues.slice(0, 3) };
+  const topCategory = issues.reduce<Record<string, number>>(
+    (acc: Record<string, number>, issue: Issue) => ({
+      ...acc,
+      [issue.category]: (acc[issue.category] ?? 0) + 1,
+    }),
+    {},
+  );
+  const category = (Object.entries(topCategory).sort(
+    (a: [string, number], b: [string, number]) => b[1] - a[1],
+  )[0]?.[0] ?? "Hostel") as Category;
+  return {
+    openIssues: issues.filter(
+      (issue: Issue) => !["Resolved", "Rejected", "Duplicate"].includes(issue.status),
+    ).length,
+    resolvedThisWeek: issues.filter((issue: Issue) => issue.status === "Resolved").length,
+    topCategory: category,
+    trending: issues.slice(0, 3),
+  };
 }
 
 export async function addReportToDb(issueId: string, reporterId: string, reason: string) {
@@ -214,7 +275,9 @@ export async function addReportToDb(issueId: string, reporterId: string, reason:
   if (!sql) return null;
   const existing = await sql<{ id: string }[]>`select id from issues where id = ${issueId} limit 1`;
   if (!existing[0]) return null;
-  const rows = await sql<Record<string, unknown>[]>`insert into reports (issue_id, reporter_id, reason) values (${issueId}, ${reporterId}, ${reason}) returning id, reason, created_at`;
+  const rows = await sql<
+    Record<string, unknown>[]
+  >`insert into reports (issue_id, reporter_id, reason) values (${issueId}, ${reporterId}, ${reason}) returning id, reason, created_at`;
   return rows[0] ?? null;
 }
 

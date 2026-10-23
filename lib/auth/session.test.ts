@@ -72,7 +72,11 @@ describe("lib/auth/session", () => {
   it("createSession stores an httpOnly cookie and getSession reads it back", async () => {
     await createSession({ id: "u1", displayName: "Student", initials: "ST", role: "student" });
     expect(mockCookies.set).toHaveBeenCalledTimes(1);
-    const [name, , options] = mockCookies.set.mock.calls[0] as [string, string, { httpOnly?: boolean; path?: string; expires?: Date }?];
+    const [name, , options] = mockCookies.set.mock.calls[0] as [
+      string,
+      string,
+      { httpOnly?: boolean; path?: string; expires?: Date }?,
+    ];
     expect(name).toBe("wella_session");
     expect(options).toMatchObject({ httpOnly: true, path: "/" });
 
@@ -99,7 +103,11 @@ describe("lib/auth/session", () => {
   it("clearSession expires the cookie", async () => {
     await createSession({ id: "u1", displayName: "Student", initials: "ST", role: "student" });
     await clearSession();
-    const [name, value, options] = mockCookies.set.mock.calls.at(-1)! as [string, string, { expires?: Date }?];
+    const [name, value, options] = mockCookies.set.mock.calls.at(-1)! as [
+      string,
+      string,
+      { expires?: Date }?,
+    ];
     expect(name).toBe("wella_session");
     expect(value).toBe("");
     expect(options?.expires).toBeInstanceOf(Date);

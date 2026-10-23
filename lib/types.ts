@@ -4,7 +4,14 @@
 export const CATEGORIES = ["Hostel", "Academic", "Sports", "Health", "SUG"] as const;
 export type Category = (typeof CATEGORIES)[number];
 
-export const STATUSES = ["Under Review", "Seen", "In Progress", "Resolved", "Rejected", "Duplicate"] as const;
+export const STATUSES = [
+  "Under Review",
+  "Seen",
+  "In Progress",
+  "Resolved",
+  "Rejected",
+  "Duplicate",
+] as const;
 export type IssueStatus = (typeof STATUSES)[number];
 export type VoteDirection = "up" | "down";
 export type SortMode = "trending" | "newest" | "commented";
@@ -51,12 +58,14 @@ export type AdminSummary = {
 };
 
 export function initialsFor(name: string) {
-  return name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase() ?? "")
-    .join("") || "W";
+  return (
+    name
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase() ?? "")
+      .join("") || "W"
+  );
 }
 
 export function statusClass(status: IssueStatus) {

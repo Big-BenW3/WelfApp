@@ -22,15 +22,12 @@ export default async function AdminPage() {
       <AppNav active="admin" isAdmin={isAdmin} />
       <main className="app-main">
         {!isAdmin ? (
-          <div
-            className="empty-state"
-            style={{ maxWidth: 620, margin: "60px auto" }}
-          >
+          <div className="empty-state" style={{ maxWidth: 620, margin: "60px auto" }}>
             <div className="eyebrow">Restricted workspace</div>
             <h2>This area is for welfare staff only.</h2>
             <p>
-              Student accounts can&apos;t open the admin dashboard. Admin
-              sign-in isn&apos;t available yet — it will be added separately.
+              Student accounts can&apos;t open the admin dashboard. Admin sign-in isn&apos;t
+              available yet — it will be added separately.
             </p>
             <Link className="button primary" href="/app">
               Back to the student feed
@@ -43,4 +40,3 @@ export default async function AdminPage() {
     </div>
   );
 }
-

@@ -20,7 +20,9 @@ export const metadata: Metadata = {
     title: "Wella — Raise what needs fixing",
     description:
       "Turn scattered welfare complaints into a visible queue the student community can move together.",
-    images: [{ url: "/og-image.svg", width: 1200, height: 630, alt: "Wella welfare issue tracker" }],
+    images: [
+      { url: "/og-image.svg", width: 1200, height: 630, alt: "Wella welfare issue tracker" },
+    ],
   },
   twitter: {
     card: "summary_large_image",

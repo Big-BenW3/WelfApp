@@ -41,18 +41,14 @@ export function ProfileScreen({
           </span>
           <div>
             <div className="eyebrow">Your profile</div>
-            <h1 style={{ margin: "4px 0 2px", fontSize: "1.35rem" }}>
-              {session.displayName}
-            </h1>
+            <h1 style={{ margin: "4px 0 2px", fontSize: "1.35rem" }}>{session.displayName}</h1>
             <p className="muted" style={{ margin: 0, fontSize: "0.78rem" }}>
-              Only you can see this page. Other students can&apos;t open your
-              profile, and there&apos;s no student directory.
+              Only you can see this page. Other students can&apos;t open your profile, and
+              there&apos;s no student directory.
             </p>
           </div>
         </div>
-        <div
-          style={{ display: "flex", flexWrap: "wrap", gap: 9, marginTop: 21 }}
-        >
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 9, marginTop: 21 }}>
           <button className="button ghost small" onClick={logout}>
             <LogOut size={14} /> Log out
           </button>
@@ -72,8 +68,8 @@ export function ProfileScreen({
           </div>
         )}
         <div className="notice success">
-          Your own anonymous votes are visible to you only. Public issue cards
-          show aggregate counts.
+          Your own anonymous votes are visible to you only. Public issue cards show aggregate
+          counts.
         </div>
       </div>
     </>
