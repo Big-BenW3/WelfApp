@@ -4,7 +4,7 @@ import { listIssues } from "@/lib/store";
 import { AppNav } from "@/components/app-nav";
 import { StudentFeed } from "@/components/student-feed";
 
-export const metadata = { title: "Wella feed", description: "See what students are raising and what is moving." };
+export const metadata = { title: "Wella feed", description: "See what students are raising and what is moving."};
 
 export default async function AppPage({ searchParams }: { searchParams: Promise<{ create?: string }> }) {
   const params = await searchParams;

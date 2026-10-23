@@ -59,7 +59,7 @@ function toComment(
   };
 }
 
-function rowToIssue(row: Record<string, unknown>, comments: Comment[] = []): Issue {
+function rowToIssue(row: Record<string, unknown>, comments: Comment[] = [], includePrivate = false): Issue {
   const status = String(row.status) as IssueStatus;
   return {
     id: String(row.id),
@@ -72,7 +72,11 @@ function rowToIssue(row: Record<string, unknown>, comments: Comment[] = []): Iss
     downvotes: Number(row.downvotes ?? 0),
     commentCount: Number(row.comment_count ?? comments.length ?? 0),
     createdAt: new Date(String(row.created_at)).toISOString(),
-    author: row.is_anonymous ? null : publicUser(row.author_id ? String(row.author_id) : null, row.author_name_snapshot ? String(row.author_name_snapshot) : null),
+    // Privacy: anonymous issue authors are hidden from public reads.
+    // Admin paths (includePrivate=true) see the snapshot author for moderation.
+    author: row.is_anonymous && !includePrivate
+      ? null
+      : publicUser(row.author_id ? String(row.author_id) : null, row.author_name_snapshot ? String(row.author_name_snapshot) : null),
     isAnonymous: Boolean(row.is_anonymous),
     imageUrl: row.image_url ? String(row.image_url) : undefined,
     officialReply: row.official_reply ? { body: String(row.official_reply), createdAt: new Date(String(row.official_reply_at ?? row.updated_at)).toISOString() } : undefined,
@@ -101,17 +105,14 @@ export async function listIssuesFromDb(options: {
 }) {
   const sql = getDatabase();
   if (!sql) return null;
-  // FEED QUERY — powers /, /app, /app/search, and the admin summary.
-  // Aggregates votes + visible comments per issue in one round trip.
-  // Columns referenced here must exist in BOTH migrations:
-  //   0000 → comments.is_hidden · 0001 → comments.is_anonymous
-  // If your DB predates 0001, run `pnpm db:migrate` (or apply the SQL
-  // manually) instead of editing this query.
   const query = options.query?.trim() || "";
   const category = options.category;
-  const sort = options.sort === "newest" ? sql`i.created_at desc` : options.sort === "commented" ? sql`comment_count desc, i.created_at desc` : sql`(upvotes - downvotes) desc, i.created_at desc`;
-  // NOTE: c.is_hidden / c.is_anonymous may be absent on DBs created before
-  // migrations 0000/0001 fully ran. COALESCE keeps the join valid there.
+  const sortRaw =
+    options.sort === "newest"
+      ? "i.created_at desc"
+      : options.sort === "commented"
+        ? "comment_count desc, i.created_at desc"
+        : "(upvotes - downvotes) desc, i.created_at desc";
   const rows = await sql<Record<string, unknown>[]>`
     select i.id, i.title, i.description, i.category, i.status, i.is_anonymous, i.author_id, i.author_name_snapshot, i.image_url, i.official_reply, i.official_reply_at, i.created_at, i.updated_at,
       coalesce(sum(case when v.direction = 'up' then 1 else 0 end), 0)::int as upvotes,
@@ -123,17 +124,15 @@ export async function listIssuesFromDb(options: {
     where (${query} = '' or i.title ilike ${`%${query}%`} or i.description ilike ${`%${query}%`})
       and (${category ?? null}::text is null or i.category = ${category ?? null})
     group by i.id
-    order by ${sort}
+    order by ${sortRaw}
     limit 40
   `;
-  return rows.map((row) => rowToIssue(row));
+  return rows.map((row: Record<string, unknown>) => rowToIssue(row));
 }
 
 export async function findIssueFromDb(id: string, includePrivate = false) {
   const sql = getDatabase();
   if (!sql) return null;
-  // DETAIL QUERY — single issue + its visible thread.
-  // Same COALESCE guard as the feed query: old DBs may lack the flags.
   const rows = await sql<Record<string, unknown>[]>`
     select i.id, i.title, i.description, i.category, i.status, i.is_anonymous, i.author_id, i.author_name_snapshot, i.image_url, i.official_reply, i.official_reply_at, i.created_at, i.updated_at,
       coalesce(sum(case when v.direction = 'up' then 1 else 0 end), 0)::int as upvotes,
@@ -147,11 +146,9 @@ export async function findIssueFromDb(id: string, includePrivate = false) {
     limit 1
   `;
   if (!rows[0]) return null;
-  // Thread read: is_anonymous may be absent pre-0001. COALESCE keeps the
-  // select valid on old DBs; toComment() above defaults it to false.
   const commentsRows = await sql<Record<string, unknown>[]>`select c.id, c.body, c.created_at, coalesce(c.is_anonymous, false) as is_anonymous, c.author_id, c.author_name_snapshot from comments c where c.issue_id = ${id} and coalesce(c.is_hidden, false) = false order by c.created_at asc`;
-  const comments = commentsRows.map((comment) => toComment(comment, includePrivate));
-  return rowToIssue(rows[0], comments);
+  const comments = commentsRows.map((comment: Record<string, unknown>) => toComment(comment, includePrivate));
+  return rowToIssue(rows[0], comments, includePrivate);
 }
 
 export async function createIssueInDb(input: { title: string; description: string; category: Category; isAnonymous: boolean; imageUrl?: string }, author: { id: string; displayName: string }) {
@@ -181,8 +178,6 @@ export async function addCommentInDb(
   const rows = await sql<Record<string, unknown>[]>`insert into comments (issue_id, author_id, author_name_snapshot, body, is_anonymous) values (${issueId}, ${author.id}, ${author.displayName}, ${body}, ${isAnonymous}) returning id, body, created_at, is_anonymous`;
   const row = rows[0];
   if (!row) return null;
-  // Public response hides the author when the student chose anonymity.
-  // The author_id stays in the row for admin moderation only.
   return toComment(
     {
       id: row.id,
@@ -199,25 +194,33 @@ export async function addCommentInDb(
 export async function updateIssueStatusInDb(id: string, status: IssueStatus, adminId: string, note?: string) {
   const sql = getDatabase();
   if (!sql) return null;
-  const rows = await sql<Record<string, unknown>[]>`update issues set status = ${status}, official_reply = coalesce(${note ?? null}, official_reply), official_reply_at = case when ${note ?? null} is not null then now() else official_reply_at end, version = version + 1, updated_at = now() where id = ${id} returning id, version`;
+  const reply = note ?? null;
+  const rows = await sql<Record<string, unknown>[]>`update issues set status = ${status}, official_reply = coalesce(${reply}::text, official_reply), official_reply_at = case when ${reply}::text is not null then now() else official_reply_at end, version = version + 1, updated_at = now() where id = ${id} returning id, version`;
   if (!rows[0]) return null;
-  await sql`insert into admin_actions (admin_id, issue_id, action, note) values (${adminId}, ${id}, ${`status:${status}`}, ${note ?? null})`;
+  await sql`insert into admin_actions (admin_id, issue_id, action, note) values (${adminId}, ${id}, ${`status:${status}`}, ${reply}::text)`;
   return rows[0];
 }
 
 export async function getAdminSummaryFromDb(): Promise<AdminSummary | null> {
   const issues = await listIssuesFromDb({ sort: "trending" });
   if (!issues) return null;
-  const topCategory = issues.reduce<Record<string, number>>((acc, issue) => ({ ...acc, [issue.category]: (acc[issue.category] ?? 0) + 1 }), {});
-  const category = (Object.entries(topCategory).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "Hostel") as Category;
-  return { openIssues: issues.filter((issue) => !["Resolved", "Rejected", "Duplicate"].includes(issue.status)).length, resolvedThisWeek: issues.filter((issue) => issue.status === "Resolved").length, topCategory: category, trending: issues.slice(0, 3) };
+  const topCategory = issues.reduce<Record<string, number>>((acc: Record<string, number>, issue: Issue) => ({ ...acc, [issue.category]: (acc[issue.category] ?? 0) + 1 }), {});
+  const category = (Object.entries(topCategory).sort((a: [string, number], b: [string, number]) => b[1] - a[1])[0]?.[0] ?? "Hostel") as Category;
+  return { openIssues: issues.filter((issue: Issue) => !["Resolved", "Rejected", "Duplicate"].includes(issue.status)).length, resolvedThisWeek: issues.filter((issue: Issue) => issue.status === "Resolved").length, topCategory: category, trending: issues.slice(0, 3) };
+}
+
+export async function addReportToDb(issueId: string, reporterId: string, reason: string) {
+  const sql = getDatabase();
+  if (!sql) return null;
+  const existing = await sql<{ id: string }[]>`select id from issues where id = ${issueId} limit 1`;
+  if (!existing[0]) return null;
+  const rows = await sql<Record<string, unknown>[]>`insert into reports (issue_id, reporter_id, reason) values (${issueId}, ${reporterId}, ${reason}) returning id, reason, created_at`;
+  return rows[0] ?? null;
 }
 
 export async function listMyIssuesFromDb(authorId: string) {
   const sql = getDatabase();
   if (!sql) return null;
-  // PROFILE QUERY — only the viewer's own issues (no user directory).
-  // Same COALESCE guard for old DBs missing comment flags.
   const rows = await sql<Record<string, unknown>[]>`
     select i.id, i.title, i.description, i.category, i.status, i.is_anonymous, i.author_id, i.author_name_snapshot, i.image_url, i.official_reply, i.official_reply_at, i.created_at, i.updated_at,
       coalesce(sum(case when v.direction = 'up' then 1 else 0 end), 0)::int as upvotes,
@@ -231,5 +234,5 @@ export async function listMyIssuesFromDb(authorId: string) {
     order by i.created_at desc
     limit 40
   `;
-  return rows.map((row) => rowToIssue(row));
+  return rows.map((row: Record<string, unknown>) => rowToIssue(row));
 }

@@ -44,6 +44,7 @@ export function IssueDetailScreen({ initialIssue }: { initialIssue: Issue }) {
   const sendReport = async (event: React.FormEvent) => {
     event.preventDefault();
     if (reportReason.trim().length < 4) { setError("Tell us briefly what needs attention."); return; }
+    setReporting(true);
     try {
       const response = await fetch("/api/issues/" + issue.id + "/report", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ reason: reportReason }) });
       const payload = await response.json().catch(() => ({}));
