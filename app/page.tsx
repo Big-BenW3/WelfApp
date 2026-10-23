@@ -47,7 +47,7 @@ export default function LandingPage() {
         <div className="container hero-grid">
           <div>
             <div className="eyebrow">Participate</div>
-            <h1 className="display">Raise what needs fixing.</h1>
+            <h1 className="display">Raise what<br />needs fixing.</h1>
             <p className="hero-copy">Wella turns scattered welfare complaints into a visible, accountable queue the student community can move together.</p>
             <div className="hero-actions">
               <Link className="button primary" href="/register">Create your first issue <ArrowRight size={16} /></Link>
