@@ -68,7 +68,7 @@ export function IssueDetailScreen({ initialIssue }: { initialIssue: Issue }) {
         flash(commentAnonymous ? "Posted anonymously" : "Comment added");
       }
     } catch {
-      setCommentError("You seem to be offline. Your draft is kept — retry when reconnected.");
+      setCommentError("You seem to be offline. Your draft is kept - retry when reconnected.");
     } finally {
       setBusyComment(false);
     }
@@ -216,7 +216,7 @@ export function IssueDetailScreen({ initialIssue }: { initialIssue: Issue }) {
                   </span>
                 ) : (
                   <span className="muted" style={{ fontSize: "0.7rem" }}>
-                    Be specific — what did you see, where, when?
+                    Be specific - what did you see, where, when?
                   </span>
                 )}
               </div>
@@ -265,7 +265,7 @@ export function IssueDetailScreen({ initialIssue }: { initialIssue: Issue }) {
               ) : (
                 <div className="empty-state" style={{ marginTop: 14 }}>
                   <h2>No comments yet.</h2>
-                  <p>Start the thread — add the first useful detail or show support.</p>
+                  <p>Start the thread - add the first useful detail or show support.</p>
                 </div>
               )}
             </div>

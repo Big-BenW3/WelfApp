@@ -171,7 +171,7 @@ export function StudentFeed({
           onCreated={(issue) => {
             setModal(false);
             setIssues((current) => [issue as Issue, ...current]);
-            showToast("Issue posted — now gathering signal.", "success");
+            showToast("Issue posted - now gathering signal.", "success");
           }}
         />
       )}

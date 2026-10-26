@@ -1,5 +1,5 @@
-// ─── Store (page + API entry points) ────────────────────────────────────────
-// Thin wrappers over lib/db/repository.ts. Always require DATABASE_URL —
+// --- Store (page + API entry points) ------------------------------------------
+// Thin wrappers over lib/db/repository.ts. Always require DATABASE_URL -
 // demo mode was removed. Privacy: listMyIssues() only returns the viewer's own.
 import { hasDatabase } from "./db/client";
 import {
@@ -25,7 +25,7 @@ function shouldSkipDatabase() {
 function requireDatabase() {
   if (!hasDatabase()) {
     throw new Error(
-      "DATABASE_URL is not set. Wella needs a Neon/Postgres database — demo mode was removed.",
+      "DATABASE_URL is not set. Wella needs a Neon/Postgres database - demo mode was removed.",
     );
   }
 }

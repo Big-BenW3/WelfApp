@@ -58,7 +58,7 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
       </h1>
       <p>
         {register
-          ? "Use a display name — it can be pseudonymous."
+          ? "Use a display name - it can be pseudonymous."
           : "Log in to vote, comment, and follow your issues."}
       </p>
       <div className="form-stack">

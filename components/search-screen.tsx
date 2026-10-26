@@ -112,7 +112,7 @@ export function SearchScreen({ initialIssues }: { initialIssues: Issue[] }) {
           <h2>{hasFilter ? "No matching issues." : "Nothing in the queue yet."}</h2>
           <p>
             {hasFilter
-              ? "Try another keyword or clear the category filter — someone may have phrased it differently."
+              ? "Try another keyword or clear the category filter - someone may have phrased it differently."
               : "Be the first to raise something worth tracking."}
           </p>
           {hasFilter && (

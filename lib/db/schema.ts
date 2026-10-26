@@ -1,6 +1,6 @@
-// ─── Drizzle schema (source of truth for columns) ───────────────────────────
+// --- Drizzle schema (source of truth for columns) --------------------------
 // Mirrors db/migrations/*.sql. If you add a column here, generate + apply a
-// migration — raw SQL in repository.ts must keep matching.
+// migration - raw SQL in repository.ts must keep matching.
 import {
   boolean,
   integer,

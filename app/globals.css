@@ -1,11 +1,11 @@
-/* ═══════════════════════════════════════════════════════════════════
-   Wella global stylesheet — section map (search these headers):
-     01 Tokens (:root) · 02 Base · 03 Brand + nav · 04 Buttons
-     05 Landing (hero/steps/categories/privacy) · 06 FAQ accordion
-     07 Finale CTA · 08 App shell (feed/search/profile/admin)
-     09 Forms + validation · 10 Modals + toasts + motion · 11 Responsive
+/* ==================================================================
+   Wella global stylesheet - section map (search these headers):
+     01 Tokens (:root) - 02 Base - 03 Brand + nav - 04 Buttons
+     05 Landing (hero/steps/categories/privacy) - 06 FAQ accordion
+     07 Finale CTA - 08 App shell (feed/search/profile/admin)
+     09 Forms + validation - 10 Modals + toasts + motion - 11 Responsive
    Landing lives in app/page.tsx; app shell in app/app/_/page.tsx.
-   ═══════════════════════════════════════════════════════════════════ */
+   ================================================================== */
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap");
 
 /* ── 01 Tokens ── */
@@ -513,7 +513,7 @@ img {
 /* ── 06 FAQ accordion ── */
 /* Synthesia-style editorial split: .faq-split grid + sticky intro, .faq-acc list.
    Behavior → components/faq-accordion.tsx (single-open, arrow toggles). */
-/* FAQ — Synthesia-style editorial split */
+/* FAQ - Synthesia-style editorial split */
 .faq-split {
   display: grid;
   grid-template-columns: minmax(240px, 380px) minmax(0, 1fr);
@@ -650,7 +650,7 @@ img {
 /* ── 07 Finale CTA ── */
 /* DocsAlot-style centered panel → components/finale-cta.tsx.
    .finale-dots = radial dot grid, .finale-glow = soft blue aura. */
-/* Finale CTA — DocsAlot-style dotted center */
+/* Finale CTA - DocsAlot-style dotted center */
 .finale {
   padding: 110px 0 120px;
 }
@@ -1077,6 +1077,89 @@ img {
   gap: 15px;
   margin-top: 28px;
 }
+
+/* Auth form specific */
+.auth-form .eyebrow {
+  color: var(--ink);
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+}
+
+.field label {
+  color: var(--ink);
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.field input {
+  padding: 12px 18px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--canvas);
+  color: var(--ink);
+  font-size: 0.93rem;
+  transition:
+    border-color 180ms var(--ease),
+    box-shadow 180ms var(--ease);
+}
+
+.field input:focus {
+  outline: none;
+  border-color: var(--ink);
+  box-shadow: 0 0 0 3px rgba(16, 42, 67, 0.1);
+}
+
+.field input::placeholder {
+  color: var(--muted);
+}
+
+.field-error {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--error);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  font-size: 0.86rem;
+}
+
+.notice.error {
+  background: var(--error-wash);
+  color: var(--error);
+  border: 1px solid rgba(200, 62, 77, 0.2);
+}
+
+.form-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 24px;
+  font-size: 0.86rem;
+}
+
+.form-footer a {
+  color: var(--ink);
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.form-footer a:hover {
+  color: var(--accent);
+}
+
 .upload-box {
   display: flex;
   align-items: center;

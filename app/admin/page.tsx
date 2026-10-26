@@ -14,7 +14,7 @@ export const metadata = {
 
 export default async function AdminPage() {
   const session = await getSession();
-  // Students can never access the admin workspace — not via nav, not via URL.
+  // Students can never access the admin workspace - not via nav, not via URL.
   // Admin logins are intentionally not offered yet; only role=admin sessions pass.
   const isAdmin = session?.role === "admin";
   return (
@@ -27,7 +27,7 @@ export default async function AdminPage() {
             <h2>This area is for welfare staff only.</h2>
             <p>
               Student accounts can&apos;t open the admin dashboard. Admin sign-in isn&apos;t
-              available yet — it will be added separately.
+              available yet - it will be added separately.
             </p>
             <Link className="button primary" href="/app">
               Back to the student feed

@@ -7,7 +7,7 @@ import { signSessionToken, verifySessionToken, type SessionClaims } from "./toke
 
 const COOKIE_NAME = "wella_session";
 
-// SESSION_SECRET is required — no fallback. Set it in .env.local or the environment.
+// SESSION_SECRET is required - no fallback. Set it in .env.local or the environment.
 // If unset, the app will crash on startup with a clear error message,
 // rather than silently using a weak cryptographic key.
 const sessionSecret = process.env.SESSION_SECRET;

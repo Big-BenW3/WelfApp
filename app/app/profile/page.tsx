@@ -24,7 +24,7 @@ export default async function ProfilePage() {
               <p className="eyebrow">Your space</p>
               <p className="muted" style={{ fontSize: "0.78rem" }}>
                 Log in to manage your own issues and session. You can only ever see your own profile
-                — there are no public student profiles.
+                - there are no public student profiles.
               </p>
             </aside>
             <section>

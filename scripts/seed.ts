@@ -1,5 +1,5 @@
 // ─── Seed script (local/dev only) ───────────────────────────────────────────
-// pnpm db:seed — needs DATABASE_URL. Creates demo student + admin and three
+// pnpm db:seed - needs DATABASE_URL. Creates demo student + admin and three
 // sample issues. Safe to re-run (upserts on email conflict).
 import bcrypt from "bcryptjs";
 import postgres from "postgres";

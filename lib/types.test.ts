@@ -9,7 +9,7 @@ import {
   type IssueStatus,
 } from "./types";
 
-describe("lib/types — constants", () => {
+describe("lib/types - constants", () => {
   it("defines exactly 5 categories", () => {
     expect(CATEGORIES).toEqual(["Hostel", "Academic", "Sports", "Health", "SUG"]);
   });
@@ -25,7 +25,7 @@ describe("lib/types — constants", () => {
   });
 });
 
-describe("lib/types — initialsFor", () => {
+describe("lib/types - initialsFor", () => {
   it("extracts initials from full name", () => {
     expect(initialsFor("John Doe")).toBe("JD");
     expect(initialsFor("Alice Bob Charlie")).toBe("AB");
@@ -35,7 +35,7 @@ describe("lib/types — initialsFor", () => {
   });
 });
 
-describe("lib/types — statusClass", () => {
+describe("lib/types - statusClass", () => {
   it("converts status to CSS class", () => {
     expect(statusClass("Under Review")).toBe("under-review");
     expect(statusClass("In Progress")).toBe("in-progress");
@@ -43,7 +43,7 @@ describe("lib/types — statusClass", () => {
   });
 });
 
-describe("lib/types — formatRelativeTime", () => {
+describe("lib/types - formatRelativeTime", () => {
   it("formats recent timestamps", () => {
     const now = new Date().toISOString();
     expect(formatRelativeTime(now)).toBe("just now");

@@ -12,7 +12,7 @@ import {
   parseJson,
 } from "./validation";
 
-describe("validation — emailSchema", () => {
+describe("validation - emailSchema", () => {
   it("accepts valid emails", () => {
     expect(emailSchema.parse("user@example.com")).toBe("user@example.com");
     expect(emailSchema.parse("  User@Example.COM  ")).toBe("user@example.com");
@@ -27,7 +27,7 @@ describe("validation — emailSchema", () => {
   });
 });
 
-describe("validation — passwordSchema", () => {
+describe("validation - passwordSchema", () => {
   it("accepts passwords >= 10 chars", () => {
     expect(passwordSchema.parse("password123")).toBe("password123");
   });
@@ -40,7 +40,7 @@ describe("validation — passwordSchema", () => {
   });
 });
 
-describe("validation — registerSchema", () => {
+describe("validation - registerSchema", () => {
   const base = { email: "alice@campus.edu", password: "StrongPass123", displayName: "Alice" };
   it("accepts valid registration", () => {
     expect(registerSchema.parse(base).displayName).toBe("Alice");
@@ -61,7 +61,7 @@ describe("validation — registerSchema", () => {
   });
 });
 
-describe("validation — loginSchema", () => {
+describe("validation - loginSchema", () => {
   it("accepts valid login", () => {
     expect(loginSchema.parse({ email: "a@b.com", password: "password123" })).toBeDefined();
   });
@@ -70,7 +70,7 @@ describe("validation — loginSchema", () => {
   });
 });
 
-describe("validation — createIssueSchema", () => {
+describe("validation - createIssueSchema", () => {
   const base = {
     title: "Water pressure in dorms",
     description: "The water pressure has been low for a week, especially on upper floors.",
@@ -122,7 +122,7 @@ describe("validation — createIssueSchema", () => {
   });
 });
 
-describe("validation — voteSchema", () => {
+describe("validation - voteSchema", () => {
   it("accepts up, down, and null directions", () => {
     expect(voteSchema.parse({ direction: "up" }).direction).toBe("up");
     expect(voteSchema.parse({ direction: "down" }).direction).toBe("down");
@@ -136,7 +136,7 @@ describe("validation — voteSchema", () => {
   });
 });
 
-describe("validation — commentSchema", () => {
+describe("validation - commentSchema", () => {
   it("accepts valid comments", () => {
     expect(commentSchema.parse({ body: "This is a useful comment." })).toBeDefined();
   });
@@ -152,7 +152,7 @@ describe("validation — commentSchema", () => {
   });
 });
 
-describe("validation — reportSchema", () => {
+describe("validation - reportSchema", () => {
   it("accepts valid reports", () => {
     expect(reportSchema.parse({ reason: "Abusive language in comment" })).toBeDefined();
   });
@@ -164,7 +164,7 @@ describe("validation — reportSchema", () => {
   });
 });
 
-describe("validation — adminStatusSchema", () => {
+describe("validation - adminStatusSchema", () => {
   const validStatuses = [
     "Under Review",
     "Seen",
@@ -192,7 +192,7 @@ describe("validation — adminStatusSchema", () => {
   });
 });
 
-describe("validation — parseJson", () => {
+describe("validation - parseJson", () => {
   it("returns ok with data on success", () => {
     const result = parseJson(emailSchema, "test@test.com");
     expect(result.ok).toBe(true);

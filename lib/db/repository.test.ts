@@ -6,7 +6,7 @@ const hasLiveDb = Boolean(url && url.startsWith("postgres") && !url.includes("lo
 
 if (!url) throw new Error("DATABASE_URL required for repository tests");
 if (!hasLiveDb) {
-  describe.skip("lib/db/repository — real DB integration", () => {
+  describe.skip("lib/db/repository - real DB integration", () => {
     it("skips without a reachable database", () => {});
   });
 } else {
@@ -16,7 +16,7 @@ if (!hasLiveDb) {
   let testIssueId: string;
   let createdReportIds: string[] = [];
 
-  describe("lib/db/repository — real DB integration", () => {
+  describe("lib/db/repository - real DB integration", () => {
     beforeAll(async () => {
       const rows = await sql<{ id: string }[]>`
         insert into users (email, password_hash, display_name, role)

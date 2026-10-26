@@ -144,7 +144,7 @@ export function CreateIssueModal({
       }
       onCreated(result.issue);
     } catch {
-      setSubmitError("You seem to be offline. Your draft is kept — reconnect and retry.");
+      setSubmitError("You seem to be offline. Your draft is kept - reconnect and retry.");
       setBusy(false);
     }
   };

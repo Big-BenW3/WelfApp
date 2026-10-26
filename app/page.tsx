@@ -1,8 +1,8 @@
 import Link from "next/link";
-// ─── Landing (/) — section map ──────────────────────────────────────────────
-// hero → #how-it-works → #categories → #privacy → #faq (FaqAccordion) →
-// FinaleCta → footer. Data: `categories` icons, `faqs` with answer CTA links.
-// Styles: .hero*, .steps, .category-*, .split-feature, .faq-*, .finale-*.
+// --- Landing (/) - section map ------------------------------------------------
+// hero -> #how-it-works -> #categories -> #privacy -> #faq (FaqAccordion) ->
+// FinaleCta -> footer. Data: `categories` icons, `faqs` with answer CTA links.
+// Styles: .hero*, .steps, .category-*, .split-feature, .faq-*, .finale-*
 import {
   ArrowRight,
   Check,
@@ -45,7 +45,7 @@ const faqs = [
   },
   {
     q: "What happens after I raise an issue?",
-    a: "It enters the public queue with a clear status — Under Review, Seen, In Progress, Resolved — plus official replies when there is an update.",
+    a: "It enters the public queue with a clear status - Under Review, Seen, In Progress, Resolved - plus official replies when there is an update.",
     linkLabel: "Raise your first issue",
     linkHref: "/register",
   },

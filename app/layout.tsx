@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-// ─── Root layout ────────────────────────────────────────────────────────────
+// --- Root layout --------------------------------------------------------
 // Wraps every route: global CSS, SEO/OpenGraph defaults (see public/og-image.svg).
 // Individual pages override title/description via their own `metadata` export.
 import "./globals.css";
@@ -8,8 +8,8 @@ const siteUrl = process.env.NEXT_PUBLIC_APP_URL;
 
 export const metadata: Metadata = {
   title: {
-    default: "Wella — Raise what needs fixing",
-    template: "%s · Wella",
+    default: "Wella - Raise what needs fixing",
+    template: "%s - Wella",
   },
   description:
     "A visible, accountable way for students to raise welfare issues and see what the union is acting on.",
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "Wella",
-    title: "Wella — Raise what needs fixing",
+    title: "Wella - Raise what needs fixing",
     description:
       "Turn scattered welfare complaints into a visible queue the student community can move together.",
     images: [
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Wella — Raise what needs fixing",
+    title: "Wella - Raise what needs fixing",
     description: "See what the union is acting on.",
     images: ["/og-image.svg"],
   },
