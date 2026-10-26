@@ -6,7 +6,16 @@ import type { PublicUser } from "../types";
 import { signSessionToken, verifySessionToken, type SessionClaims } from "./token";
 
 const COOKIE_NAME = "wella_session";
-const sessionSecret = process.env.SESSION_SECRET ?? "test-session-secret-for-dev-only";
+
+// SESSION_SECRET is required — no fallback. Set it in .env.local or the environment.
+// If unset, the app will crash on startup with a clear error message,
+// rather than silently using a weak cryptographic key.
+const sessionSecret = process.env.SESSION_SECRET;
+if (!sessionSecret) {
+  throw new Error(
+    "SESSION_SECRET is not set. Add it to your .env.local file with at least 32 random characters.",
+  );
+}
 const secret = sessionSecret;
 
 export type { SessionClaims };

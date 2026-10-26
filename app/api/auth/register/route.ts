@@ -6,11 +6,14 @@ import { error, ok } from "@/lib/api";
 import { createSession } from "@/lib/auth/session";
 import { hashPassword } from "@/lib/auth/password";
 import { createUser, findUserByEmail } from "@/lib/db/repository";
-import { rateLimit } from "@/lib/rate-limit";
+import { rateLimit, getTrustedIp } from "@/lib/rate-limit";
 import { registerSchema } from "@/lib/validation";
 
 export async function POST(request: NextRequest) {
-  const ip = request.headers.get("x-forwarded-for") ?? "local";
+  // Use getTrustedIp to safely extract client IP, respecting proxy trust
+  // Configure trustedProxies with your production reverse proxy IPs,
+  // or pass an empty array [] to never trust x-forwarded-for.
+  const ip = getTrustedIp(request, []);
   if (!rateLimit(`register:${ip}`, 6, 60_000).allowed)
     return error("Too many attempts. Try again in a minute.", 429);
   const parsed = registerSchema.safeParse(await request.json().catch(() => null));

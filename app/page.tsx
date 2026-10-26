@@ -89,7 +89,6 @@ export default function LandingPage() {
             <div className="eyebrow">Participate</div>
             <h1 className="display">
               Raise what
-              <br />
               needs fixing.
             </h1>
             <p className="hero-copy">

@@ -45,6 +45,7 @@ export function IssueCard({
           <button
             className={`vote-button ${issue.viewerVote === "up" ? "active" : ""}`}
             disabled={busy}
+            aria-label={issue.viewerVote === "up" ? "Removed upvote" : "Upvote this issue"}
             onClick={() => onVote(issue.viewerVote === "up" ? null : "up")}
           >
             <ArrowUp size={14} /> {issue.upvotes}
@@ -52,6 +53,7 @@ export function IssueCard({
           <button
             className={`vote-button down ${issue.viewerVote === "down" ? "active" : ""}`}
             disabled={busy}
+            aria-label={issue.viewerVote === "down" ? "Removed downvote" : "Downvote this issue"}
             onClick={() => onVote(issue.viewerVote === "down" ? null : "down")}
           >
             <ArrowDown size={14} /> {issue.downvotes}

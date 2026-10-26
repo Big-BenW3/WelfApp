@@ -21,6 +21,7 @@ export function FaqAccordion({ items }: { items: FaqItem[] }) {
               className="faq-q"
               aria-expanded={isOpen}
               aria-controls={"faq-panel-" + i}
+              aria-label={`Toggle FAQ answer ${i + 1}`}
               id={"faq-button-" + i}
               onClick={() => setOpen(isOpen ? null : i)}
             >

@@ -102,7 +102,12 @@ export function AdminDashboard({ initialSummary }: { initialSummary: AdminSummar
               <select
                 aria-label={`Change status for ${issue.title}`}
                 value={issue.status}
-                onChange={(event) => updateStatus(issue, event.target.value as IssueStatus)}
+                onChange={(event) => {
+                  const selected = event.target.value as string;
+                  if (statuses.includes(selected as IssueStatus)) {
+                    updateStatus(issue, selected as IssueStatus);
+                  }
+                }}
                 style={{
                   minHeight: 34,
                   border: "1px solid var(--line)",
